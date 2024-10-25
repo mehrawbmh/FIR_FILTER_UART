@@ -1,15 +1,15 @@
-module wrapper_controller(clk, rst, RxD, TxD_busy, RxD_data_ready, ld1, ld2, FIR_input_valid, FIR_output_valid, mode, ldRes);
-    input clk, rst, RxD, RxD_data_ready, FIR_input_valid, TxD_busy;
-    output ld1, ld2, ldRes, mode, FIR_output_valid, done;
+module wrapper_controller(clk, rst, RxD, TxD_busy, RxD_data_ready, ld1, ld2, FIR_input_valid, FIR_output_valid, mode, ldRes, done);
+    input clk, rst, RxD, RxD_data_ready, TxD_busy, FIR_output_valid;
+    output reg ld1, ld2, ldRes, mode, FIR_input_valid, done;
 
-	logic[3:0] ps, ns;
+	reg[3:0] ps, ns;
 	localparam[3:0] IDLE = 3'd0,
                     RECEIVE1 = 3'd1, 
                     RECEIVE2 = 3'd2, 
                     START_FIR = 3'd3, 
                     WORK_FIR = 3'd4, 
                     FIFO_RES1 = 3'd5,
-                    FIFO_RES2 = 3'd6
+                    FIFO_RES2 = 3'd6,
                     TRANSMIT1 = 3'd7,
                     TRANSMIT2 = 3'd8,
                     DONE = 3'd9;
@@ -22,7 +22,7 @@ module wrapper_controller(clk, rst, RxD, TxD_busy, RxD_data_ready, ld1, ld2, FIR
 	end
 
 
-	always @(ps, RxD, RxD_data_ready, FIR_input_valid, TxD_busy) begin
+	always @(ps, RxD, RxD_data_ready, FIR_output_valid, TxD_busy) begin
 		case(ps)
             IDLE:
                 ns <= RxD ? IDLE : RECEIVE1;
@@ -50,7 +50,7 @@ module wrapper_controller(clk, rst, RxD, TxD_busy, RxD_data_ready, ld1, ld2, FIR
 	end
 
 	always @(ps) begin
-		{ld1, ld2, ldRes, mode, FIR_output_valid, done} = 6'b000000;
+		{ld1, ld2, ldRes, mode, FIR_input_valid, done} = 6'b000000;
         
         case(ps)
             RECEIVE1: begin
