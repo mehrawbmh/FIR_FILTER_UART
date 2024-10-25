@@ -1,5 +1,8 @@
 *.wlf
 *.bak
 *.mpf
+*.mti
 work/
+transcript
+
 
